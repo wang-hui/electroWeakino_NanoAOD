@@ -8,10 +8,13 @@ echo $SCRAM_ARCH
 eval `scramv1 project CMSSW CMSSW_10_2_9`
 cd CMSSW_10_2_9/src
 eval `scramv1 runtime -sh`
+git clone https://github.com/wang-hui/JetToolbox.git JMEAnalysis/JetToolbox -b electroWeakino_hui
+scram b
 cd ${_CONDOR_SCRATCH_DIR}
 pwd
 ls
 
-cmsRun step1_NANO.py $1 $2 $3
+#cmsRun step1_NANO.py $1 $2 $3
+cmsRun jetToolbox_nanoAODv5_cfg.py $1 $2 $3
 
 xrdcp nano_test.root root://cmseos.fnal.gov//store/user/huiwang/ElectroWeakino/nanoAOD_test/nano_mn1_${1}_mx1_${2}_${3}.root

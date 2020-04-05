@@ -10,18 +10,24 @@ cd CMSSW_10_2_9/src
 cmsenv
 ```
 
-2. checkout this repo
+2. checkout JetToolbox to recluster AK10 or fatter jets
 ```
-git clone git@github.com:wang-hui/electroWeakino_NanoAOD.git
+git clone https://github.com/wang-hui/JetToolbox.git JMEAnalysis/JetToolbox -b electroWeakino_hui
+scram b - j 4
+```
+
+3. checkout this repo
+```
+git clone https://github.com/wang-hui/electroWeakino_NanoAOD.git
 cd electroWeakino_NanoAOD
 ```
 
-3. local test
+4. local test
 ```
-cmsRun step1_NANO.py
+cmsRun jetToolbox_nanoAODv5_cfg.py
 ```
 
-4. submit condor
+5. submit condor
 ```
 cd Condor
 python make_condor_cfg.py
