@@ -1,5 +1,5 @@
 # ElectroWeakino nanoAOD producer
-This is a git repo to make ntuple from miniAOD to nanoAOD  
+This is a git repo to produce nanoAOD ntuples from miniAOD  
 The step of making miniAOD can be found the this repo  
 https://github.com/wang-hui/electroWeakino
 
