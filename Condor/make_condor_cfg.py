@@ -1,19 +1,53 @@
-import glob
+import os
 from shutil import copyfile
+from datetime import date
 
-folder_name = "miniAOD_test"
-folder_path = "/eos/uscms/store/user/huiwang/ElectroWeakino/"
-file_list = glob.glob(folder_path + folder_name + '/mini*.root')
+folder_name = "TTbar_test"
+result_path = "/eos/uscms/store/user/lpcrutgers/huiwang/ElectroWeakino/nanoAOD/"
+condor_path = "/uscms_data/d3/huiwang/condor_temp/huiwang/ElectroWeakino/nanoAOD/"
+file_list = "../FileList/TTbar_test.list"
+tot_jobs = 1000
 
-header = ""
+today = str(date.today())
+folder_name_full = folder_name + "-" + today
+result_path_full = result_path + folder_name_full
+condor_path_full = condor_path + folder_name_full
 
-for file_name in file_list:
-	useful_part = file_name.split("mn1_")[1].split(".")[0]
-	mn1 = useful_part.split("_mx1_")[0]
-	mx1 = useful_part.split("_mx1_")[1].split("_")[0]
-	file_index = useful_part.split("_mx1_")[1].split("_")[1]
-	header = header + "\nArguments = " + mn1 + " " + mx1 + " " + file_index
+#try: os.mkdir(result_path_full)
+#except OSError: print result_path_full, " already exisit. Make sure you want to save there"
+#try: os.mkdir(condor_path_full)
+#except OSError: print condor_path_full, " already exisit. Make sure you want to save there"
+os.system("mkdir -p " + result_path_full)
+os.system("mkdir -p " + condor_path_full)
+
+f = open(file_list, "r")
+my_list = f.readlines()
+f.close()
+
+header = (""
++ "Output = " + condor_path_full + "/$(Process).out\n"
++ "Error = " + condor_path_full + "/$(Process).err\n"
++ "Log = " + condor_path_full + "/$(Process).log\n"
+)
+
+my_list.sort()
+tot_lines = len(my_list)
+my_step = max(int(tot_lines / tot_jobs),1) #int returns floor
+list_of_sublist = []
+for i in xrange (0, tot_lines, my_step):
+	list_of_sublist.append(my_list[i : i + my_step])
+
+for j in range (len(list_of_sublist)):
+	f = open("FileList_" + str(j) + ".list", "w")
+	for line in list_of_sublist[j]:
+		f.write(line)
+	f.close()
+	header = header + "\nArguments = FileList_" + str(j) + ".list " + result_path_full + "/ " + str(j)
 	header = header + "\nQueue"
+
+os.system("tar -cf FileList.tar FileList_*.list")
+os.system("rm FileList_test/*.list")
+os.system("mv FileList_*.list FileList_test")
 
 copyfile("condor_submit.back", "condor_submit.txt")
 f = open("condor_submit.txt", "a")

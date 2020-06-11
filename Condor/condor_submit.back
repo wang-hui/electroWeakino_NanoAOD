@@ -1,10 +1,8 @@
 universe = vanilla
 Executable = condor.sh
-Output = /uscms_data/d3/huiwang/condor_temp/huiwang/ElectroWeakino/nanoAOD_test/$(Process).out
-Error = /uscms_data/d3/huiwang/condor_temp/huiwang/ElectroWeakino/nanoAOD_test/$(Process).err
-Log = /uscms_data/d3/huiwang/condor_temp/huiwang/ElectroWeakino/nanoAOD_test/$(Process).log
-transfer_input_files = condor.sh, jetToolbox_nanoAODv5_cfg.py 
+transfer_input_files = condor.sh, nanov6102x_on_mini94x_2017_mc_NANO.py, SimpleFlatTableProducer.h, FileList.tar 
 should_transfer_files = YES 
 when_to_transfer_output = ON_EXIT
 x509userproxy = $ENV(X509_USER_PROXY)
+transfer_output_files = _condor_stderr
 

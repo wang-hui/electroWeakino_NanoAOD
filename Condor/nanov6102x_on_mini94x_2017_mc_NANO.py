@@ -2,12 +2,10 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step1 --filein file:mini_test.root --fileout file:nano_test.root --mc --eventcontent NANOAODSIM --datatier NANOAODSIM --conditions 102X_mc2017_realistic_v7 --step NANO --nThreads 2 --era Run2_2017,run2_nanoAOD_94XMiniAODv2 -n -1
+# with command line options: nano102x_on_mini94x_2017_mc -s NANO --mc --eventcontent NANOAODSIM --datatier NANOAODSIM --conditions 102X_mc2017_realistic_v7 --era Run2_2017,run2_nanoAOD_94XMiniAODv2 --customise_commands=process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False))) --nThreads 2 --customise PhysicsTools/NanoAODJMAR/nano_jmar_cff.JMARnano_customizeMC -n 100 --filein /store/mc/RunIIFall17MiniAODv2/QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/20000/68438CED-D443-E811-83B7-0025905B85FC.root
 import FWCore.ParameterSet.Config as cms
-
+import sys
 from Configuration.StandardSequences.Eras import eras
-
-file_list = ["file:/eos/uscms/store/user/huiwang/ElectroWeakino/miniAOD_test/mini_mn1_300_mx1_310_0.root", "file:/eos/uscms/store/user/huiwang/ElectroWeakino/miniAOD_test/mini_mn1_300_mx1_310_1.root"]
 
 process = cms.Process('NANO',eras.Run2_2017,eras.run2_nanoAOD_94XMiniAODv2)
 
@@ -24,13 +22,19 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(100)
 )
+
+f=open(sys.argv[2], "r")
+my_list = f.readlines()
+f.close()
 
 # Input source
 process.source = cms.Source("PoolSource",
-    #fileNames = cms.untracked.vstring('file:mini_test.root'),
-    fileNames = cms.untracked.vstring(file_list),
+    fileNames = cms.untracked.vstring(
+        #'file:/eos/uscms/store/user/huiwang/ElectroWeakino/official_samples/QCD_HT1000to1500_MINIAODSIM_94X_mc2017_realistic_v14-v1_FEFD945C-8A43-E811-9C76-0CC47A7C346E.root'
+	my_list
+),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -40,7 +44,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('step1 nevts:-1'),
+    annotation = cms.untracked.string('nano102x_on_mini94x_2017_mc nevts:100'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -54,7 +58,7 @@ process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
         dataTier = cms.untracked.string('NANOAODSIM'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('file:nano_test.root'),
+    fileName = cms.untracked.string('nano_test.root'),
     outputCommands = process.NANOAODSIMEventContent.outputCommands
 )
 
@@ -75,7 +79,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(2)
+process.options.numberOfThreads=cms.untracked.uint32(1)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 # customisation of the process.
@@ -86,10 +90,23 @@ from PhysicsTools.NanoAOD.nano_cff import nanoAOD_customizeMC
 #call to customisation function nanoAOD_customizeMC imported from PhysicsTools.NanoAOD.nano_cff
 process = nanoAOD_customizeMC(process)
 
+# Automatic addition of the customisation function from PhysicsTools.NanoAODJMAR.nano_jmar_cff
+from PhysicsTools.NanoAODJMAR.nano_jmar_cff import JMARnano_customizeMC 
+
+#call to customisation function JMARnano_customizeMC imported from PhysicsTools.NanoAODJMAR.nano_jmar_cff
+process = JMARnano_customizeMC(process)
+
+# Automatic addition of the customisation function from JMEAnalysis.JetToolbox.nanoAOD_jetToolbox_cff
+from JMEAnalysis.JetToolbox.nanoAOD_jetToolbox_cff import nanoJTB_customizeMC
+
+#call to customisation function nanoJTB_customizeMC imported from JMEAnalysis.JetToolbox.nanoAOD_jetToolbox_cff
+process = nanoJTB_customizeMC(process)
+
 # End of customisation functions
 
 # Customisation from command line
 
+process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
