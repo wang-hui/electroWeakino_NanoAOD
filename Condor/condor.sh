@@ -21,4 +21,4 @@ ls
 
 cmsRun nanov6102x_on_mini94x_2017_mc_NANO.py $1
 
-xrdcp nano_test.root root://cmseos.fnal.gov//${2}/nano_${3}.root
+xrdcp nano_test.root root://cmseos.fnal.gov//${2}/nanoAOD_${3}.root
