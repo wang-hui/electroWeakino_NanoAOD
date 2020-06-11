@@ -2,10 +2,10 @@ import os
 from shutil import copyfile
 from datetime import date
 
-folder_name = "TTbar_test"
+folder_name = "miniAOD_2017_mn1_300_mx1_350"
 result_path = "/eos/uscms/store/user/lpcrutgers/huiwang/ElectroWeakino/nanoAOD/"
 condor_path = "/uscms_data/d3/huiwang/condor_temp/huiwang/ElectroWeakino/nanoAOD/"
-file_list = "../FileList/TTbar_test.list"
+file_list = "../FileList/miniAOD_2017_mn1_300_mx1_350.list"
 tot_jobs = 1000
 
 today = str(date.today())
@@ -46,6 +46,7 @@ for j in range (len(list_of_sublist)):
 	header = header + "\nQueue"
 
 os.system("tar -cf FileList.tar FileList_*.list")
+os.system("mkdir -p FileList_test")
 os.system("rm FileList_test/*.list")
 os.system("mv FileList_*.list FileList_test")
 

@@ -10,14 +10,15 @@ cd CMSSW_10_2_18/src
 eval `scramv1 runtime -sh`
 git cms-init --upstream-only
 git cms-addpkg PhysicsTools/NanoAOD
+echo "ls SimpleFlatTableProducer.h"
+ls ${_CONDOR_SCRATCH_DIR}/SimpleFlatTableProducer.h
 mv ${_CONDOR_SCRATCH_DIR}/SimpleFlatTableProducer.h PhysicsTools/NanoAOD/interface/
 git clone https://github.com/cms-jet/NanoAODJMAR.git -b 102x PhysicsTools/NanoAODJMAR
 git clone https://github.com/wang-hui/JetToolbox.git JMEAnalysis/JetToolbox -b electroWeakino_hui
-scram b
+scram b -j 2
 cd ${_CONDOR_SCRATCH_DIR}
 tar -xvf FileList.tar
 pwd
-ls
 
 cmsRun nanov6102x_on_mini94x_2017_mc_NANO.py $1
 
