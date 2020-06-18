@@ -1,7 +1,9 @@
-# ElectroWeakino nanoAOD producer
+# ElectroWeakino nanoAOD production
 This is a git repo to produce nanoAOD ntuples from miniAOD  
-The step of making miniAOD can be found the this repo  
-https://github.com/wang-hui/electroWeakino
+The step of making miniAOD can be found in this repo  
+https://github.com/wang-hui/electroWeakino  
+The analysis code can be found in this repo  
+https://github.com/wang-hui/electroWeakino_analysis
 
 1. setup CMSSW. Use CMSSW_10_2_18 for 2016, 2017 and 2018 data and MC NANOAODv6 according to the XPOG recommendations
 ```
